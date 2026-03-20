@@ -492,7 +492,9 @@ require('lazy').setup({
         ---@module 'mason.settings'
         ---@type MasonSettings
         ---@diagnostic disable-next-line: missing-fields
-        opts = {},
+        opts = {
+          ensure_installed = { 'copilot' },
+        },
       },
       -- Maps LSP server names between nvim-lspconfig and Mason package names.
       'mason-org/mason-lspconfig.nvim',
@@ -641,6 +643,10 @@ require('lazy').setup({
             Lua = {},
           },
         },
+
+        copilot = {},
+        rust_analyzer = {},
+        pyright = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -744,7 +750,9 @@ require('lazy').setup({
         },
         opts = {},
       },
+      'fang2hou/blink-copilot',
     },
+
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
@@ -789,7 +797,14 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' },
+        providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            async = true,
+          },
+        },
       },
 
       snippets = { preset = 'luasnip' },
@@ -908,6 +923,23 @@ require('lazy').setup({
         end,
       })
     end,
+  },
+
+  {
+    'saghen/blink.cmp',
+    dependencies = { 'fang2hou/blink-copilot' },
+    opts = {
+      sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' },
+        providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            async = true,
+          },
+        },
+      },
+    },
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
