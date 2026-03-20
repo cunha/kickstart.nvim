@@ -1,5 +1,6 @@
 --[[
 
+
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -88,10 +89,10 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ','
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -114,7 +115,22 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+-- vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+-- vim.schedule(function() vim.g.clipboard = 'osc52' end)
+vim.o.clipboard = 'unnamedplus'
+vim.g.clipboard = 'osc52'
+
+-- vim.g.clipboard = {
+--   name = 'OSC 52',
+--   copy = {
+--     ['+'] = require('vim.ui.clipboard.osc52').copy '+',
+--     ['*'] = require('vim.ui.clipboard.osc52').copy '*',
+--   },
+--   paste = {
+--     ['+'] = require('vim.ui.clipboard.osc52').paste '+',
+--     ['*'] = require('vim.ui.clipboard.osc52').paste '*',
+--   },
+-- }
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -180,8 +196,8 @@ vim.diagnostic.config {
   underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
   -- Can switch between these as you prefer
-  virtual_text = true, -- Text shows up at the end of the line
-  virtual_lines = false, -- Text shows up underneath the line, with virtual lines
+  virtual_text = false, -- Text shows up at the end of the line
+  virtual_lines = { current_line = true }, -- Text shows up underneath the line, with virtual lines
 
   -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
   jump = { float = true },
@@ -207,10 +223,13 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<A-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<A-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<A-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<A-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { desc = 'Show previous buffer' })
+vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Show next buffer' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -492,7 +511,9 @@ require('lazy').setup({
         ---@module 'mason.settings'
         ---@type MasonSettings
         ---@diagnostic disable-next-line: missing-fields
-        opts = {},
+        opts = {
+          ensure_installed = { 'copilot' },
+        },
       },
       -- Maps LSP server names between nvim-lspconfig and Mason package names.
       'mason-org/mason-lspconfig.nvim',
@@ -646,6 +667,24 @@ require('lazy').setup({
             },
           },
         },
+
+        copilot = {},
+        rust_analyzer = {},
+        -- rust_analyzer = {
+        --   cmd = vim.lsp.rpc.connect '.lspmux.sock',
+        --   -- When using unix domain sockets, use something like:
+        --   --cmd = vim.lsp.rpc.connect("/path/to/lspmux.sock"),
+        --   settings = {
+        --     ['rust-analyzer'] = {
+        --       lspMux = {
+        --         version = '1',
+        --         method = 'connect',
+        --         server = 'rust-analyzer',
+        --       },
+        --     },
+        --   },
+        -- },
+        pyright = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -703,11 +742,21 @@ require('lazy').setup({
       -- You can also specify external formatters in here.
       formatters_by_ft = {
         -- rust = { 'rustfmt' },
+        sh = { 'shfmt' },
+        bash = { 'shfmt' },
+        zsh = { 'shfmt' },
+        python = { 'ruff' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      },
+      formatters = {
+        ruff = {
+          command = 'ruff',
+          args = { 'format', '-' },
+        },
       },
     },
   },
@@ -741,7 +790,10 @@ require('lazy').setup({
         },
         opts = {},
       },
+      'fang2hou/blink-copilot',
+      -- 'Kaiser-Yang/blink-cmp-avante',
     },
+
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
@@ -786,7 +838,21 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' }, -- 'avante' },
+        providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            async = true,
+          },
+          -- avante = {
+          --   name = 'Avante',
+          --   module = 'blink-cmp-avante',
+          --   opts = {
+          --     -- options for blink-cmp-avante
+          --   },
+          -- },
+        },
       },
 
       snippets = { preset = 'luasnip' },
@@ -823,7 +889,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'tokyonight'
     end,
   },
 
@@ -888,8 +954,7 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      -- ensure basic parser are installed
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'rust', 'python', 'go' }
       require('nvim-treesitter').install(parsers)
 
       ---@param buf integer
@@ -936,6 +1001,81 @@ require('lazy').setup({
         end,
       })
     end,
+  },
+
+  { 'akinsho/bufferline.nvim', version = '*', dependencies = 'nvim-tree/nvim-web-devicons' },
+
+  {
+    'carlos-algms/agentic.nvim',
+
+    opts = {
+      -- Any ACP-compatible provider works. Built-in: "claude-agent-acp" | "gemini-acp" | "codex-acp" | "opencode-acp" | "cursor-acp" | "copilot-acp" | "auggie-acp" | "mistral-vibe-acp" | "cline-acp" | "goose-acp"
+      provider = 'opencode-acp', -- setting the name here is all you need to get started
+    },
+
+    -- these are just suggested keymaps; customize as desired
+    keys = {
+      {
+        '<C-\\>',
+        function() require('agentic').toggle() end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'Toggle Agentic Chat',
+      },
+      {
+        "<C-'>",
+        function() require('agentic').add_selection_or_file_to_context() end,
+        mode = { 'n', 'v' },
+        desc = 'Add file or selection to Agentic to Context',
+      },
+      {
+        '<leader>an',
+        function() require('agentic').new_session() end,
+        -- mode = { 'n', 'v', 'i' },
+        mode = { 'n' },
+        desc = 'New Agentic Session',
+      },
+      {
+        '<leader>ar', -- ai Restore
+        function() require('agentic').restore_session() end,
+        desc = 'Agentic Restore session',
+        silent = true,
+        mode = { 'n' },
+      },
+      {
+        '<leader>ad', -- ai Diagnostics
+        function() require('agentic').add_current_line_diagnostics() end,
+        desc = 'Add current line diagnostic to Agentic',
+        mode = { 'n' },
+      },
+      {
+        '<leader>aD', -- ai all Diagnostics
+        function() require('agentic').add_buffer_diagnostics() end,
+        desc = 'Add all buffer diagnostics to Agentic',
+        mode = { 'n' },
+      },
+    },
+  },
+
+  {
+    'lervag/vimtex',
+    lazy = false, -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      -- VimTeX configuration goes here, e.g.
+      vim.g.vimtex_view_method = 'skim'
+    end,
+  },
+
+  {
+    'cunha/kitty-navigator.nvim',
+    opts = {
+      keybindings = {
+        left = '<D-h>',
+        down = '<D-j>',
+        up = '<D-k>',
+        right = '<D-l>',
+      },
+    },
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
@@ -985,6 +1125,41 @@ require('lazy').setup({
     },
   },
 })
+
+local function yank_with_context()
+  -- 1. Get the visual selection range
+  local line_start = vim.fn.line 'v'
+  local line_end = vim.fn.line '.'
+  vim.api.nvim_input '<Esc>'
+
+  -- 2. Get the text within that range
+  -- n.b. 'lines' is a table of strings
+  local lines = vim.fn.getline(line_start, line_end)
+  local selection_text = table.concat(lines, '\n')
+
+  -- 3. Gather metadata
+  local full_path = vim.fn.expand '%:.'
+  -- local file_type = vim.bo.filetype -- Get the syntax (e.g., 'python', 'csv')
+
+  -- 4. Construct the final string
+  local result = string.format('%s:%d-%d\n```\n%s\n```', full_path, line_start, line_end, selection_text)
+
+  local ns_id = vim.api.nvim_create_namespace 'yank_with_context_highlight'
+
+  -- 5. Send to the system clipboard (+)
+  vim.fn.setreg('+', result)
+
+  -- 6. Highlight selected region
+  vim.hl.range(0, ns_id, 'IncSearch', { line_start - 1, 0 }, { line_end - 1, 1000 }, {
+    priority = 100,
+    timeout = 250,
+  })
+end
+
+vim.keymap.set('v', '<A-y>', yank_with_context, { desc = 'Yank relative path context' })
+
+vim.opt.termguicolors = true
+require('bufferline').setup {}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
