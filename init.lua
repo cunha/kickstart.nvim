@@ -769,7 +769,7 @@ require('lazy').setup({
         opts = {},
       },
       'fang2hou/blink-copilot',
-      'Kaiser-Yang/blink-cmp-avante',
+      -- 'Kaiser-Yang/blink-cmp-avante',
     },
 
     ---@module 'blink.cmp'
@@ -816,20 +816,20 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot', 'avante' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' }, -- 'avante' },
         providers = {
           copilot = {
             name = 'copilot',
             module = 'blink-copilot',
             async = true,
           },
-          avante = {
-            name = 'Avante',
-            module = 'blink-cmp-avante',
-            opts = {
-              -- options for blink-cmp-avante
-            },
-          },
+          -- avante = {
+          --   name = 'Avante',
+          --   module = 'blink-cmp-avante',
+          --   opts = {
+          --     -- options for blink-cmp-avante
+          --   },
+          -- },
         },
       },
 
@@ -1032,6 +1032,9 @@ local function yank_with_context()
 end
 
 vim.keymap.set('v', '<A-y>', yank_with_context, { desc = 'Yank relative path context' })
+
+vim.opt.termguicolors = true
+require('bufferline').setup {}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
