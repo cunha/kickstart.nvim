@@ -953,6 +953,153 @@ require('lazy').setup({
 
   { 'akinsho/bufferline.nvim', version = '*', dependencies = 'nvim-tree/nvim-web-devicons' },
 
+  {
+    'carlos-algms/agentic.nvim',
+
+    opts = {
+      -- Any ACP-compatible provider works. Built-in: "claude-agent-acp" | "gemini-acp" | "codex-acp" | "opencode-acp" | "cursor-acp" | "copilot-acp" | "auggie-acp" | "mistral-vibe-acp" | "cline-acp" | "goose-acp"
+      provider = 'opencode-acp', -- setting the name here is all you need to get started
+    },
+
+    -- these are just suggested keymaps; customize as desired
+    keys = {
+      {
+        '<C-\\>',
+        function() require('agentic').toggle() end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'Toggle Agentic Chat',
+      },
+      {
+        "<C-'>",
+        function() require('agentic').add_selection_or_file_to_context() end,
+        mode = { 'n', 'v' },
+        desc = 'Add file or selection to Agentic to Context',
+      },
+      {
+        '<C-,>',
+        function() require('agentic').new_session() end,
+        mode = { 'n', 'v', 'i' },
+        desc = 'New Agentic Session',
+      },
+      {
+        '<A-i>r', -- ai Restore
+        function() require('agentic').restore_session() end,
+        desc = 'Agentic Restore session',
+        silent = true,
+        mode = { 'n', 'v', 'i' },
+      },
+      {
+        '<leader>ad', -- ai Diagnostics
+        function() require('agentic').add_current_line_diagnostics() end,
+        desc = 'Add current line diagnostic to Agentic',
+        mode = { 'n' },
+      },
+      {
+        '<leader>aD', -- ai all Diagnostics
+        function() require('agentic').add_buffer_diagnostics() end,
+        desc = 'Add all buffer diagnostics to Agentic',
+        mode = { 'n' },
+      },
+    },
+  },
+
+  {
+    'MunsMan/kitty-navigator.nvim',
+    build = {
+      'cp navigate_kitty.py ~/.config/kitty',
+      'cp pass_keys.py ~/.config/kitty',
+    },
+    opts = { keybindings = {
+      left = '<D-h>',
+      down = '<D-j>',
+      up = '<D-k>',
+      right = '<D-l>',
+    } },
+  },
+
+  -- {
+  --   'yetone/avante.nvim',
+  --   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  --   -- ⚠️ must add this setting! ! !
+  --   build = vim.fn.has 'win32' ~= 0 and 'powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false' or 'make',
+  --   event = 'VeryLazy',
+  --   version = false, -- Never set this value to "*"! Never!
+  --   ---@module 'avante'
+  --   ---@type avante.Config
+  --   opts = {
+  --     -- add any opts here
+  --     -- this file can contain specific instructions for your project
+  --     instructions_file = 'AGENTS.md',
+  --     -- for example
+  --     provider = 'zai',
+  --     providers = {
+  --       zai = {
+  --         __inherited_from = 'openai',
+  --         endpoint = 'https://api.z.ai/api/coding/paas/v4',
+  --         model = 'GLM-5',
+  --         timeout = 30000, -- Timeout in milliseconds
+  --         api_key_name = 'AVANTE_ZAI_API_KEY',
+  --       },
+  --       claude = {
+  --         endpoint = 'https://api.anthropic.com',
+  --         model = 'claude-sonnet-4-20250514',
+  --         timeout = 30000, -- Timeout in milliseconds
+  --         extra_request_body = {
+  --           temperature = 0.75,
+  --           max_tokens = 20480,
+  --         },
+  --       },
+  --       moonshot = {
+  --         endpoint = 'https://api.moonshot.ai/v1',
+  --         model = 'kimi-k2-0711-preview',
+  --         timeout = 30000, -- Timeout in milliseconds
+  --         extra_request_body = {
+  --           temperature = 0.75,
+  --           max_tokens = 32768,
+  --         },
+  --       },
+  --     },
+  --   },
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'MunifTanjim/nui.nvim',
+  --     --- The below dependencies are optional,
+  --     -- 'nvim-mini/mini.pick', -- for file_selector provider mini.pick
+  --     'nvim-telescope/telescope.nvim', -- for file_selector provider telescope
+  --     -- 'hrsh7th/nvim-cmp', -- autocompletion for avante commands and mentions
+  --     -- 'ibhagwan/fzf-lua', -- for file_selector provider fzf
+  --     -- 'stevearc/dressing.nvim', -- for input provider dressing
+  --     -- 'folke/snacks.nvim', -- for input provider snacks
+  --     'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
+  --     -- 'zbirenbaum/copilot.lua', -- for providers='copilot'
+  --     -- {
+  --     --   -- support for image pasting
+  --     --   'HakonHarnes/img-clip.nvim',
+  --     --   event = 'VeryLazy',
+  --     --   opts = {
+  --     --     -- recommended settings
+  --     --     default = {
+  --     --       embed_image_as_base64 = false,
+  --     --       prompt_for_file_name = false,
+  --     --       drag_and_drop = {
+  --     --         insert_mode = true,
+  --     --       },
+  --     --       -- required for Windows users
+  --     --       use_absolute_path = true,
+  --     --     },
+  --     --   },
+  --     -- },
+  --     {
+  --       -- Make sure to set this up properly if you have lazy=true
+  --       'MeanderingProgrammer/render-markdown.nvim',
+  --       opts = {
+  --         file_types = { 'markdown', 'Avante' },
+  --       },
+  --       ft = { 'markdown', 'Avante' },
+  --     },
+  --   },
+  -- },
+  --
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
