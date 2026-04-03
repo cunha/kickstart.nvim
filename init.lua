@@ -115,8 +115,22 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
-vim.schedule(function() vim.g.clipboard = 'osc52' end)
+-- vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+-- vim.schedule(function() vim.g.clipboard = 'osc52' end)
+vim.o.clipboard = 'unnamedplus'
+vim.g.clipboard = 'osc52'
+
+-- vim.g.clipboard = {
+--   name = 'OSC 52',
+--   copy = {
+--     ['+'] = require('vim.ui.clipboard.osc52').copy '+',
+--     ['*'] = require('vim.ui.clipboard.osc52').copy '*',
+--   },
+--   paste = {
+--     ['+'] = require('vim.ui.clipboard.osc52').paste '+',
+--     ['*'] = require('vim.ui.clipboard.osc52').paste '*',
+--   },
+-- }
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -1006,17 +1020,15 @@ require('lazy').setup({
   },
 
   {
-    'MunsMan/kitty-navigator.nvim',
-    build = {
-      'cp navigate_kitty.py ~/.config/kitty',
-      'cp pass_keys.py ~/.config/kitty',
+    'cunha/kitty-navigator.nvim',
+    opts = {
+      keybindings = {
+        left = '<D-h>',
+        down = '<D-j>',
+        up = '<D-k>',
+        right = '<D-l>',
+      },
     },
-    opts = { keybindings = {
-      left = '<D-h>',
-      down = '<D-j>',
-      up = '<D-k>',
-      right = '<D-l>',
-    } },
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
