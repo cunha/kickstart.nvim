@@ -844,6 +844,7 @@ require('lazy').setup({
             name = 'copilot',
             module = 'blink-copilot',
             async = true,
+            score_offset = 1000,
           },
           -- avante = {
           --   name = 'Avante',
