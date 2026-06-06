@@ -233,6 +233,20 @@ vim.keymap.set('n', '<A-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { desc = 'Show previous buffer' })
 vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Show next buffer' })
 
+vim.keymap.set('i', '<M-BS>', '<C-o>db', { desc = "Delete word backward" })
+vim.keymap.set('i', '<C-BS>', '<C-o>dB', { desc = "Delete WORD backward" })
+vim.keymap.set('i', '<M-Del>', '<C-o>dw', { desc = "Delete word forward" })
+vim.keymap.set('i', '<C-Del>', '<C-o>dW', { desc = "Delete WORD forward" })
+vim.keymap.set('i', '<M-Left>', '<C-o>b', { desc = "Move word backward" })
+vim.keymap.set('i', '<M-Right>', '<C-o>w', { desc = "Move word forward" })
+vim.keymap.set('i', '<C-Left>', '<C-o>B', { desc = "Move WORD backward" })
+vim.keymap.set('i', '<C-Right>', '<C-o>W', { desc = "Move WORD forward" })
+
+vim.keymap.set('i', '<D-h>', '<Esc><D-h>', { remap = true, desc = "Navigate left" })
+vim.keymap.set('i', '<D-j>', '<Esc><D-j>', { remap = true, desc = "Navigate down" })
+vim.keymap.set('i', '<D-k>', '<Esc><D-k>', { remap = true, desc = "Navigate up" })
+vim.keymap.set('i', '<D-l>', '<Esc><D-l>', { remap = true, desc = "Navigate right" })
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
