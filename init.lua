@@ -293,24 +293,27 @@ do
   vim.pack.add { gh 'folke/todo-comments.nvim' }
   require('todo-comments').setup { signs = false }
 
-  -- [[ mini.nvim ]]
-  --  A collection of various small independent plugins/modules
-  vim.pack.add { gh 'nvim-mini/mini.nvim' }
+  vim.pack.add { gh 'nvim-treesitter/nvim-treesitter-textobjects' }
 
-  -- Better Around/Inside textobjects
-  --
-  -- Examples:
-  --  - va)  - [V]isually select [A]round [)]paren
-  --  - yiiq - [Y]ank [I]nside [I]+1 [Q]uote
-  --  - ci'  - [C]hange [I]nside [']quote
+  vim.pack.add { gh 'nvim-mini/mini.nvim' }
+  local spec_treesitter = require('mini.ai').gen_spec.treesitter
   require('mini.ai').setup {
+    custom_textobjects = {
+      F = spec_treesitter({ a = '@function.outer', i = '@function.inner' }),
+      o = spec_treesitter({
+        a = { '@conditional.outer', '@loop.outer' },
+        i = { '@conditional.inner', '@loop.inner' },
+      })
+    },
     -- NOTE: Avoid conflicts with the built-in incremental selection mappings on Neovim>=0.12 (see `:help treesitter-incremental-selection`)
     mappings = {
       around_next = 'aa',
       inside_next = 'ii',
     },
-    n_lines = 500,
   }
+
+  require('mini.jump').setup {}
+  require('mini.jump2d').setup {}
 
   -- Add/delete/replace surroundings (brackets, quotes, etc.)
   --
