@@ -598,6 +598,7 @@ do
     copilot = {},
     rust_analyzer = {},
     stylua = {}, -- Used to format Lua code
+    taplo = {},
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
