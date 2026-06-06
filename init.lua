@@ -146,6 +146,18 @@ do
   vim.keymap.set('i', '<D-k>', '<Esc><D-k>', { remap = true, desc = 'Navigate up' })
   vim.keymap.set('i', '<D-l>', '<Esc><D-l>', { remap = true, desc = 'Navigate right' })
 
+  vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { desc = 'Show previous buffer' })
+  vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Show next buffer' })
+
+  vim.keymap.set('i', '<M-BS>', '<C-o>db', { desc = "Delete word backward" })
+  vim.keymap.set('i', '<C-BS>', '<C-o>dB', { desc = "Delete WORD backward" })
+  vim.keymap.set('i', '<M-Del>', '<C-o>dw', { desc = "Delete word forward" })
+  vim.keymap.set('i', '<C-Del>', '<C-o>dW', { desc = "Delete WORD forward" })
+  vim.keymap.set('i', '<M-Left>', '<C-o>b', { desc = "Move word backward" })
+  vim.keymap.set('i', '<M-Right>', '<C-o>w', { desc = "Move word forward" })
+  vim.keymap.set('i', '<C-Left>', '<C-o>B', { desc = "Move WORD backward" })
+  vim.keymap.set('i', '<C-Right>', '<C-o>W', { desc = "Move WORD forward" })
+
   -- [[ Basic Autocommands ]]
   --  See `:help lua-guide-autocommands`
 
