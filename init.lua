@@ -149,10 +149,10 @@ do
   vim.keymap.set('n', '<S-h>', ':bprevious<CR>', { desc = 'Show previous buffer' })
   vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Show next buffer' })
 
-  vim.keymap.set('i', '<M-BS>', '<C-o>db', { desc = "Delete word backward" })
-  vim.keymap.set('i', '<C-BS>', '<C-o>dB', { desc = "Delete WORD backward" })
-  vim.keymap.set('i', '<M-Del>', '<C-o>dw', { desc = "Delete word forward" })
-  vim.keymap.set('i', '<C-Del>', '<C-o>dW', { desc = "Delete WORD forward" })
+  vim.keymap.set('i', '<M-BS>', '<C-w>', { desc = "Delete word backward" })
+  vim.keymap.set('i', '<C-BS>', '<C-\\><C-o>dB', { desc = "Delete WORD backward" })
+  vim.keymap.set('i', '<M-Del>', '<C-\\><C-o>dw', { desc = "Delete word forward" })
+  vim.keymap.set('i', '<C-Del>', '<C-\\><C-o>dW', { desc = "Delete WORD forward" })
   vim.keymap.set('i', '<M-Left>', '<C-o>b', { desc = "Move word backward" })
   vim.keymap.set('i', '<M-Right>', '<C-o>w', { desc = "Move word forward" })
   vim.keymap.set('i', '<C-Left>', '<C-o>B', { desc = "Move WORD backward" })
@@ -611,6 +611,7 @@ do
     rust_analyzer = {},
     stylua = {}, -- Used to format Lua code
     taplo = {},
+    zk = {},
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -682,11 +683,12 @@ do
       lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
     },
     formatters_by_ft = {
+      bash = { 'shfmt' },
+      markdown = { 'dprint' },
+      python = { 'ruff' },
       rust = { 'rustfmt' },
       sh = { 'shfmt' },
-      bash = { 'shfmt' },
       zsh = { 'shfmt' },
-      python = { 'ruff' },
     },
     formatters = {
       ruff = {
@@ -891,6 +893,12 @@ do
     right = '<D-l>',
   } }
 
+  -- vim.pack.add { gh 'zk-org/zk-nvim' }
+  -- require('zk-nvim').setup {}
+end
+
+-- Local plugins/extensions
+do
   require('cunha.yank-with-context').setup { keybind = '<A-y>' }
 end
 
