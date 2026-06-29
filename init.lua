@@ -705,6 +705,16 @@ do
         command = 'ruff',
         args = { 'format', '-' },
       },
+      shfmt = {
+        args = function(_, ctx)
+          local args = { '-filename', ctx.filename }
+          if vim.bo[ctx.buf].expandtab then
+            table.insert(args, '-i')
+            table.insert(args, tostring(ctx.shiftwidth))
+          end
+          return args
+        end,
+      },
     },
   }
 
