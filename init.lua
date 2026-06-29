@@ -105,7 +105,7 @@ do
     update_in_insert = false,
     severity_sort = true,
     float = { border = 'rounded', source = 'if_many' },
-    underline = { severity = { min = vim.diagnostic.severity.WARN } },
+    underline = { severity = { min = vim.diagnostic.severity.HINT } },
 
     -- Can switch between these as you prefer
     virtual_text = false, -- Text shows up at the end of the line
@@ -906,6 +906,11 @@ end
 do
   vim.pack.add { gh 'lervag/vimtex' }
   vim.g.vimtex_view_method = 'skim'
+end
+
+for _, s in ipairs({ 'Error', 'Warn', 'Info', 'Hint' }) do
+  local sp = vim.api.nvim_get_hl(0, { name = 'DiagnosticUnderline' .. s }).sp
+  vim.api.nvim_set_hl(0, 'DiagnosticUnderline' .. s, { undercurl = true, sp = sp })
 end
 
 -- vim: ts=2 sts=2 sw=2 et
