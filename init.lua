@@ -928,6 +928,30 @@ do
   vim.g.vimtex_view_method = 'skim'
 end
 
+-- On-demand grammar checking via LanguageTool (n-gram enabled)
+do
+  vim.pack.add { gh 'mfussenegger/nvim-lint' }
+  local lint = require('lint')
+  local current_lang = 'en-US'
+  lint.linters.languagetool = require('lint.util').wrap(lint.linters.languagetool, function(diagnostic)
+    diagnostic.severity = vim.diagnostic.severity.HINT
+    return diagnostic
+  end)
+  lint.linters.languagetool.args = {
+    '--languagemodel', vim.env.HOME .. '/.local/languagetool',
+    '--language', function() return current_lang end,
+    '--json',
+  }
+  vim.api.nvim_create_user_command('LtexCheck', function(opts)
+    current_lang = (opts.args ~= '' and opts.args) or 'en-US'
+    lint.try_lint('languagetool')
+  end, {
+    nargs = '?',
+    desc = 'Check current buffer with LanguageTool (optional lang, e.g. pt-BR)',
+    complete = function() return { 'en-US', 'pt-BR' } end,
+  })
+end
+
 for _, s in ipairs({ 'Error', 'Warn', 'Info', 'Hint' }) do
   local sp = vim.api.nvim_get_hl(0, { name = 'DiagnosticUnderline' .. s }).sp
   vim.api.nvim_set_hl(0, 'DiagnosticUnderline' .. s, { undercurl = true, sp = sp })
