@@ -326,6 +326,16 @@ do
 
   require('mini.jump').setup {}
   require('mini.jump2d').setup {}
+  require('mini.bufremove').setup {}
+
+  -- Route the built-in `:bdelete` to mini.bufremove (which preserves window layout).
+  -- A lowercase `:bdelete` user command is impossible, so define `:Bdelete` and
+  -- abbreviate the built-in spelling to it.
+  vim.api.nvim_create_user_command('Bdelete', function(opts)
+    MiniBufremove.delete(0, opts.bang)
+  end, { bang = true, desc = 'Delete current buffer (mini.bufremove), preserving window layout' })
+  vim.cmd.cabbrev('bdelete Bdelete')
+  vim.cmd.cabbrev('bd Bdelete')
 
   -- Add/delete/replace surroundings (brackets, quotes, etc.)
   --
