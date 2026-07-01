@@ -956,6 +956,7 @@ do
   lint.linters.languagetool.args = {
     '--languagemodel', vim.env.HOME .. '/.local/languagetool',
     '--language', function() return current_lang end,
+    '--disable', 'WHITESPACE_RULE',
     '--json',
   }
   vim.api.nvim_create_user_command('LtexCheck', function(opts)
@@ -966,6 +967,24 @@ do
     desc = 'Check current buffer with LanguageTool (optional lang, e.g. pt-BR)',
     complete = function() return { 'en-US', 'pt-BR' } end,
   })
+end
+
+do
+  vim.pack.add { gh 'S1M0N38/ai.nvim' }
+  vim.pack.add { gh 'S1M0N38/dante.nvim' }
+  require('dante').setup {
+    presets = {
+      ["default"] = {
+        client = {
+          base_url = "https://api.z.ai/api/coding/paas/v4",
+          api_key = nil,
+        },
+        request = {
+          model = "GLM-5.2"
+        }
+      },
+    },
+  }
 end
 
 for _, s in ipairs({ 'Error', 'Warn', 'Info', 'Hint' }) do
