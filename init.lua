@@ -615,7 +615,23 @@ do
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
 
-    basedpyright = {},
+    basedpyright = {
+      settings = {
+        basedpyright = {
+          analysis = {
+            diagnosticSeverityOverrides = {
+              reportAny = 'none',
+              reportExplicitAny = 'none',
+              reportImplicitStringConcatenation = 'none',
+              reportUnknownArgumentType = 'none',
+              reportUnknownMemberType = 'none',
+              reportUnknownVariableType = 'none',
+              reportUnusedCallResult = 'none',
+            },
+          },
+        },
+      },
+    },
     bashls = {},
     copilot = {},
     rust_analyzer = {},
