@@ -639,6 +639,22 @@ do
     taplo = {},
     zk = {},
 
+    -- Grammar/spell checking via LanguageTool (n-gram enabled)
+    ltex_plus = {
+      settings = {
+        ltex = {
+          language = 'en-US',
+          additionalRules = {
+            languageModel = vim.env.HOME .. '/.local/languagetool',
+          },
+          disabledRules = {
+            ['en-US'] = { 'WHITESPACE_RULE' },
+            ['pt-BR'] = { 'WHITESPACE_RULE' },
+          },
+        },
+      },
+    },
+
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
       on_init = function(client)
@@ -678,9 +694,12 @@ do
     gh 'neovim/nvim-lspconfig',
   }
 
+  -- Servers registered but started on demand (not auto-enabled)
+  local on_demand = { ltex_plus = true }
+
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
-    vim.lsp.enable(name)
+    if not on_demand[name] then vim.lsp.enable(name) end
   end
 end
 
@@ -944,27 +963,23 @@ do
   vim.g.vimtex_view_method = 'skim'
 end
 
--- On-demand grammar checking via LanguageTool (n-gram enabled)
+-- ltex_plus grammar checking: launched and toggled on demand
 do
-  vim.pack.add { gh 'mfussenegger/nvim-lint' }
-  local lint = require('lint')
-  local current_lang = 'en-US'
-  lint.linters.languagetool = require('lint.util').wrap(lint.linters.languagetool, function(diagnostic)
-    diagnostic.severity = vim.diagnostic.severity.HINT
-    return diagnostic
-  end)
-  lint.linters.languagetool.args = {
-    '--languagemodel', vim.env.HOME .. '/.local/languagetool',
-    '--language', function() return current_lang end,
-    '--disable', 'WHITESPACE_RULE',
-    '--json',
-  }
-  vim.api.nvim_create_user_command('LtexCheck', function(opts)
-    current_lang = (opts.args ~= '' and opts.args) or 'en-US'
-    lint.try_lint('languagetool')
+  vim.api.nvim_create_user_command('Ltex', function()
+    local enabled = vim.iter(vim.lsp.get_configs { enabled = true })
+      :any(function(c) return c.name == 'ltex_plus' end)
+    vim.lsp.enable('ltex_plus', not enabled)
+  end, { desc = 'Toggle ltex_plus grammar checking' })
+
+  vim.api.nvim_create_user_command('LtexLang', function(opts)
+    local lang = (opts.args ~= '' and opts.args) or 'en-US'
+    for _, client in ipairs(vim.lsp.get_clients { name = 'ltex_plus', bufnr = 0 }) do
+      client.config.settings.ltex.language = lang
+      client:notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+    end
   end, {
     nargs = '?',
-    desc = 'Check current buffer with LanguageTool (optional lang, e.g. pt-BR)',
+    desc = 'Set ltex_plus language (e.g. en-US, pt-BR)',
     complete = function() return { 'en-US', 'pt-BR' } end,
   })
 end
