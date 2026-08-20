@@ -940,14 +940,14 @@ do
   vim.pack.add { gh 'akinsho/bufferline.nvim' }
   require('bufferline').setup {}
 
-  vim.pack.add { gh 'cunha/kitty-navigator.nvim' }
-  require('kitty-navigator').setup { keybindings = {
-    left = '<D-h>',
-    down = '<D-j>',
-    up = '<D-k>',
-    right = '<D-l>',
-  } }
-
+  -- vim.pack.add { gh 'cunha/kitty-navigator.nvim' }
+  -- require('kitty-navigator').setup { keybindings = {
+  --   left = '<D-h>',
+  --   down = '<D-j>',
+  --   up = '<D-k>',
+  --   right = '<D-l>',
+  -- } }
+  --
   -- vim.pack.add { gh 'zk-org/zk-nvim' }
   -- require('zk-nvim').setup {}
 end
