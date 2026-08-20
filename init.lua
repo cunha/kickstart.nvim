@@ -988,15 +988,17 @@ do
   vim.pack.add { gh 'S1M0N38/ai.nvim' }
   vim.pack.add { gh 'S1M0N38/dante.nvim' }
   require('dante').setup {
+    verbose = false,
+    layout = "right",
     presets = {
       ["default"] = {
         client = {
           base_url = "https://api.z.ai/api/coding/paas/v4",
-          api_key = nil,
+          api_key = vim.env.ZAI_CODING_PLAN_NVIM_DANTE,
         },
         request = {
-          model = "GLM-5.2"
-        }
+          model = "glm-5.3",
+        },
       },
     },
   }
